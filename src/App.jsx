@@ -1,23 +1,29 @@
-import Header from "./Header"
-import Home from "./Home"
-import Produto from "./Produtos"
+import React from "react";
+import Produto from "./Produto"
 
 const App = () => {
-  const { pathname } = window.location
-  
-  let Pagina;
-  if (pathname === "/produtos") {
-    Pagina = Produto
-  } else {
-    Pagina = Home
-  }
-  
+const [dados, setDados] = React.useState(null)
+const [carregando, setCarregando] = React.useState(null)
+
+async function handleClick(event) {
+  setCarregando(true);
+  const response = await fetch(
+    `https://ranekapi.origamid.dev/json/api/produto/${event.target.innerText}`
+  );
+  const json = await response.json();
+  setDados(json);
+  setCarregando(false);
+}
+
   return (
-    <section>
-    <Header />
-    <Pagina />
-    </section>
+    <div>
+      <button style={{ margin: '.5rem'}} onClick={handleClick}>notebook</button>
+      <button style={{ margin: '.5rem'}} onClick={handleClick}>smartphone</button>
+      <button style={{ margin: '.5rem'}} onClick={handleClick}>tablet</button>
+      {carregando && <p>Carregando...</p>}
+      {!carregando && dados && < Produto dados={dados} />}
+    </div>
   )
-    }
+}
 
 export default App
